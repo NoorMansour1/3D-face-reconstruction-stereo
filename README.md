@@ -1,2 +1,2 @@
 # 3D-face-reconstruction-stereo
-A 3D face reconstruction project from stereo image pairs using Matlab.
+This project aims to recreate a 3D model of a face given two stereo image pairs.
