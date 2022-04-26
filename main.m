@@ -6,9 +6,9 @@ clear all;
 close all;
 
 % Load 3 pictures
-imleft=imread('subject4_Left_1.jpg');
-immid=imread('subject4_Middle_1.jpg');
-imright=imread('subject4_Right_1.jpg');
+imleft=imread('subject\subject_left.jpg');
+immid=imread('subject\subject_middle.jpg');
+imright=imread('subject\subject_right.jpg');
 
 %Convert uint8 to double
 imleft = im2double(imleft);
@@ -118,13 +118,6 @@ gray_imleft = rgb2gray(rect_imleft);
 gray_imright = rgb2gray(rect_imright);
 gray_immidR = rgb2gray(rect_immidR);
 
-% %Image smoothing
-% h=fspecial('gaussian',5,1);
-% gray_immidL = imfilter(gray_immidL,h);
-% gray_imleft = imfilter(gray_imleft,h);
-% gray_imright = imfilter(gray_imright,h);
-% gray_immidR= imfilter(gray_immidR,h);
-
 % ------------------------------ LEFT to MID --------------------------------
 % - Finding the disparity range
 % cpselect(rect_imleft,rect_immidL) % choose a point closest (nose) and choose a point furtherst (ear)
@@ -134,7 +127,6 @@ gray_immidR = rgb2gray(rect_immidR);
 load Left; load MidL
 DiffL=MidL-Left; maxDisL=max(DiffL(:,1)); minDisL=min(DiffL(:,1));
 disparityRangeL = [ceil(minDisL/16)*16 floor(maxDisL/16)*16]; % within the maxDis and minDis and dividable by 16
-%disparityRangeL=[352 416];
 
 % - Find the disparity map
 disparityMapL = disparitySGM(gray_immidL,gray_imleft,'DisparityRange',disparityRangeL, 'UniquenessThreshold',uTH);
@@ -151,10 +143,6 @@ disparityMapL(unreliableL)=0;
 
 % Interpolation
 disparityMapL = interpolationpic(disparityMapL);
-
-
-% disparityMapL = abs(disparityMapL); % Take absolute value to inverse the depth\
-% disparityRangeL = flip(abs(disparityRangeL));
 
 % Visualization
 figure; imshow(disparityMapL, disparityRangeL)
@@ -222,7 +210,6 @@ pcshow(points3DR); xlabel('X'); ylabel('Y'); zlabel('Z');
 title('Point Cloud Right Side')
 
 % Denoise and Remove noise 
-%points3DR_cloud = pointCloud(-points3DR, 'Color',rect_immidR);
 points3DR_cloud = pointCloud(points3DR, 'Color',rect_immidR);
 points3DR_denoise=pcdenoise(points3DR_cloud);
 points3DR_clean = removeInvalidPoints(points3DR_denoise);
@@ -233,7 +220,6 @@ title('Cleaner Point Cloud Right Side')
 
 
 %% Taks 7: Create a Mesh
-%mesh_create_func(rect_immidL,disparityMapL,-points3DL,unreliableL)
 mesh_create_func(rect_immidL,disparityMapL,points3DL,unreliableL)
 title("Left Side Mesh")
 
